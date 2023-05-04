@@ -1,0 +1,24 @@
+---
+- name: Prevent git from being upgraded
+  dpkg_selections:
+    name: git
+    selection: hold
+
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+
+- name: Upgrade the OS
+  apt:
+    upgrade: dist
+  register: result
+
+- name: Remove all unused Linux kernel and dependencies that are no longer required
+  apt:
+    autoremove: yes
+    purge: yes
+
+- name: Reboot the machine
+  reboot:
+  when: result is changed
